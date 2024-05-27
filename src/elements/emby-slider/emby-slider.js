@@ -205,6 +205,21 @@ function setMarker(range, valueMarker, marker, valueProgress) {
 }
 
 function updateMarkers(range, currentValue) {
+    function getMarkerHtml(markerInfo) {
+        let markerTypeSpecificClasses = '';
+
+        if (markerInfo.className === 'chapterMarker') {
+            markerTypeSpecificClasses = markerInfo.className;
+
+            if (typeof markerInfo.name === 'string' && markerInfo.name.length) {
+                // limit the class length in case the name contains half a novel
+                markerTypeSpecificClasses = `${markerInfo.className} marker-${markerInfo.name.substring(0, 100).toLowerCase().replace(' ', '-')}`;
+            }
+        }
+
+        return `<span class="material-icons sliderMarker ${markerTypeSpecificClasses}" aria-hidden="true"></span>`;
+    }
+
     if (range.getMarkerInfo) {
         const newMarkerInfo = range.getMarkerInfo();
 
@@ -212,8 +227,8 @@ function updateMarkers(range, currentValue) {
             range.markerInfo = newMarkerInfo;
 
             let markersHtml = '';
-            range.markerInfo.forEach(() => {
-                markersHtml += '<span class="sliderMarker" aria-hidden="true"></span>';
+            range.markerInfo.forEach(info => {
+                markersHtml += getMarkerHtml(info);
             });
             range.markerContainerElement.innerHTML = markersHtml;
 
